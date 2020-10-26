@@ -1,4 +1,5 @@
 ### TerrariaBot 🌳
 
  - Código usado para la automatización del bot de twitter https://twitter.com/rTerraria.
- - Está desarrollado en pyhton junto con la api de reddit PRAW (https://github.com/praw-dev/praw).
+ - PRAW Reddt API: https://github.com/praw-dev/praw.
+ - TWEEPY Twitter API: https://github.com/tweepy/tweepy.
