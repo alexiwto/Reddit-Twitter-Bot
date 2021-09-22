@@ -1,6 +1,6 @@
 🌳 TerrariaBot 🌳
 
-Code used for the automatization of twitter bot https://twitter.com/rTerraria 
+Code used for the automatization of the twitter bot https://twitter.com/rTerraria 
 The bot will pick the top 10 posts of the given subreddit with the PRAW API, apply custom validations (post with image, not repeated, etc.) and post it in the specified twitter account through TWEEEPY API.
 
  - PRAW Reddt API: https://github.com/praw-dev/praw.
