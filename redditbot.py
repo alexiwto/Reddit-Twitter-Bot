@@ -22,6 +22,8 @@ NOMBRESUBREDDIT = ''
 IMGDIR = 'img'
 #Fichero donde se va añadiendo los posts que se tuitean para evitar duplicados
 LOG = 'log.txt'
+#Máximo de líneas que guardará el fichero de log, para evitar que el archivo pese demasiado
+MAXLOGLINES = 60
 
 def conexionreddit():
 
@@ -39,14 +41,14 @@ def posts(reddit):
         subreddit = reddit.subreddit(NOMBRESUBREDDIT)
         print('Posts seleccionados: ')
         contador = 0
-        for submission in subreddit.hot(limit=5):
+        for submission in subreddit.hot(limit=10):
                 postid = submission.id
                 titulopost = submission.title
                 urlpost = submission.url
                 print (postid + ' - ' + titulopost + ' - ' + urlpost)
                 crearTweet(postid, titulopost, urlpost)
                 contador += 1
-                if contador == 5:
+                if contador == 10:
                         print('Ninguno de los posts se puede tuitear. Se para el bot')
                         borraImg()
                         exit(0)
@@ -101,6 +103,8 @@ def publicarTweet(titulopost, imagen, postid):
         api = tweepy.API(auth)
         print('Tuiteando post: ' + titulopost + ' con imagen: ' + imagen)
         log_postid(postid)
+        log_file_size()
+        titulopost = titulopost + ' redd.it/'+postid
         if imagen:
                 api.update_with_media(filename=imagen, status=titulopost)
                 borraImg()
@@ -111,14 +115,28 @@ def log_postid(postid):
         with open(LOG, 'a') as out_file:
                 out_file.write(str(postid) + '\n')
 
+#Borra la primera línea del archivo de log para evitar que el archivo de log pese demasiado, si el archivo tiene más de X líneas (para evitar duplicados)
+def log_file_size():
+
+        with open(LOG, 'r') as file_log_in:
+                #Guardamos en la variable data el fichero entero con saltos de línea
+                data = file_log_in.read().splitlines(True)
+                #Contamos las líneas que tiene el fichero
+                contador = 0
+                for line in data:
+                        contador += 1
+
+        #Si el fichero supera la cantidad de líneas permitida, borramos la primera
+        if(contador > MAXLOGLINES):
+                with open(LOG, 'w') as file_log_out:
+                        file_log_out.writelines(data[1:])
+
 #Borra las imagenes de /img
 def borraImg():
-
         for filename in glob(IMGDIR + '/*'):
                 os.remove(filename)
 
 def main():
-
         #Crea el directorio de imagen y/o el log si no existen.
         if not os.path.exists(LOG):
                 with open(LOG, 'w'):
