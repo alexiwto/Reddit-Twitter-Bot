@@ -101,12 +101,26 @@ def publicarTweet(titulopost, imagen, postid):
         auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
         auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
         api = tweepy.API(auth)
+
+        Client = tweepy.Client(
+                access_token=ACCESS_TOKEN,
+                access_token_secret=ACCESS_TOKEN_SECRET,
+                consumer_key=CONSUMER_KEY,
+                consumer_secret=CONSUMER_SECRET,
+        )
+        
         print('Tuiteando post: ' + titulopost + ' con imagen: ' + imagen)
         log_postid(postid)
         log_file_size()
         titulopost = titulopost + ' redd.it/'+postid
         if imagen:
-                api.update_with_media(filename=imagen, status=titulopost)
+                
+                #OLD API changes
+                #api.media_upload(filename=imagen, status=titulopost)
+                media = api.media_upload(filename=imagen)
+                media_list = [media.media_id_string]
+                Client.create_tweet(text=titulopost, media_ids=media_list)
+                
                 borraImg()
                 exit(0)
 
